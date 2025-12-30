@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>梦飞田园 Dream Garden | 智耕鲜境 健康自然来</title>
+    <style>
+        /* --- 全局变量与重置 --- */
+        :root {
+            --bg-color: #050a05;
+            --text-primary: #ffffff;
+            --text-secondary: #a0cfa0;
+            --accent-green: #4ade80;
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --glass-shine: rgba(255, 255, 255, 0.2);
+            --card-hover-shadow: 0 20px 40px rgba(74, 222, 128, 0.15);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            cursor: none; /* 隐藏默认鼠标，使用自定义光标 */
+        }
+
+        body {
+            font-family: 'Helvetica Neue', Helvetica, Arial, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        a { text-decoration: none; color: inherit; }
+        ul { list-style: none; }
+
+        /* --- 自定义光标 --- */
+        .cursor-dot,
+        .cursor-outline {
+            position: fixed;
+            top: 0;
+            left: 0;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            z-index: 9999;
+            pointer-events: none;
+        }
+
+        .cursor-dot {
+            width: 8px;
+            height: 8px;
+            background-color: var(--accent-green);
+        }
+
+        .cursor-outline {
+            width: 40px;
+            height: 40px;
+            border: 1px solid var(--accent-green);
+            transition: width 0.2s, height 0.2s, background-color 0.2s;
+        }
+
+        /* --- 玻璃拟态通用类 --- */
+        .glass-panel {
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            border-radius: 16px;
+        }
+
+        /* --- 导航栏 --- */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 20px 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+            transition: 0.3s;
+        }
+        
+        nav.scrolled {
+            background: rgba(5, 10, 5, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 15px 50px;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            letter-spacing: 2px;
+            background: linear-gradient(to right, #fff, var(--accent-green));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 40px;
+        }
+
+        .nav-links a {
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: color 0.3s;
+            position: relative;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background-color: var(--accent-green);
+            transition: width 0.3s;
+        }
+
+        .nav-links a:hover { color: var(--accent-green); }
+        .nav-links a:hover::after { width: 100%; }
+
+        /* --- Hero 首屏 (视差效果) --- */
+        .hero {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* 模拟背景图 - 实际开发建议用高清芦笋田园图 */
+        .hero-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 110%; /* 用于视差滚动 */
+            background: radial-gradient(circle at center, #1a2e1a 0%, #050a05 80%);
+            z-index: -2;
+            transform: translateY(0);
+        }
+        
+        /* 装饰性光点 */
+        .glow-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.4;
+            z-index: -1;
+            animation: float 10s infinite ease-in-out;
+        }
+        .orb-1 { width: 300px; height: 300px; background: var(--accent-green); top: 10%; left: 20%; }
+        .orb-2 { width: 400px; height: 400px; background: #2c5e2c; bottom: 10%; right: 10%; }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .hero-content h1 {
+            font-size: 64px;
+            font-weight: 300;
+            margin-bottom: 20px;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeUp 1s forwards 0.5s;
+        }
+
+        .hero-content h1 span {
+            font-weight: 700;
+            color: var(--accent-green);
+        }
+
+        .hero-content p {
+            font-size: 18px;
+            color: var(--text-secondary);
+            margin-bottom: 40px;
+            max-width: 600px;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeUp 1s forwards 0.8s;
+        }
+
+        .btn {
+            padding: 15px 40px;
+            border-radius: 30px;
+            font-size: 16px;
+            font-weight: bold;
+            transition: 0.3s;
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+            border: 1px solid var(--accent-green);
+            color: var(--accent-green);
+            background: transparent;
+        }
+        
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: var(--accent-green);
+            transition: 0.4s;
+            z-index: -1;
+        }
+
+        .btn:hover {
+            color: #000;
+        }
+        .btn:hover::before {
+            left: 0;
+        }
+
+        .hero-btn {
+            opacity: 0;
+            animation: fadeUp 1s forwards 1.1s;
+        }
+
+        @keyframes fadeUp {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- 关于品牌 --- */
+        .section {
+            padding: 120px 10%;
+            position: relative;
+        }
+
+        .section-title {
+            font-size: 36px;
+            margin-bottom: 60px;
+            text-align: center;
+        }
+        
+        .section-title span {
+            border-bottom: 2px solid var(--accent-green);
+            padding-bottom: 10px;
+        }
+
+        .about-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .feature-card {
+            padding: 40px;
+            transition: transform 0.4s ease;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-10px);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .feature-icon {
+            font-size: 32px;
+            margin-bottom: 20px;
+            color: var(--accent-green);
+        }
+
+        .feature-card h3 { margin-bottom: 15px; }
+        .feature-card p { color: #ccc; font-size: 14px; }
+
+        /* --- 产品展示 (重点液态效果) --- */
+        .products-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 40px;
+        }
+
+        .product-card {
+            position: relative;
+            height: 400px;
+            overflow: hidden;
+            transition: 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        .product-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 50%; height: 100%;
+            background: linear-gradient(to right, transparent, rgba(255,255,255,0.3), transparent);
+            transform: skewX(-25deg);
+            transition: 0.5s;
+        }
+
+        .product-card:hover::before {
+            left: 150%;
+            transition: 0.7s;
+        }
+
+        .product-img {
+            width: 100%;
+            height: 60%;
+            background-color: #1a1a1a; /* 占位色，实际应为图片 */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #555;
+            font-size: 12px;
+            position: relative;
+        }
+        
+        /* 模拟图片内容 */
+        .p-img-1 { background: radial-gradient(#4ade8022, #000); } /* 芦笋 */
+        .p-img-2 { background: radial-gradient(#eab30822, #000); } /* 芦笋糕 */
+        .p-img-3 { background: radial-gradient(#84cc1622, #000); } /* 芦笋面 */
+        .p-img-4 { background: radial-gradient(#22d3ee22, #000); } /* 周边 IP */
+
+        .product-info {
+            padding: 20px;
+            height: 40%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .product-name {
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .product-desc {
+            font-size: 13px;
+            color: #aaa;
+            margin-top: 5px;
+        }
+
+        .product-price {
+            font-size: 18px;
+            color: var(--accent-green);
+            font-weight: bold;
+        }
+
+        .buy-btn {
+            margin-top: 10px;
+            padding: 8px 0;
+            width: 100%;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 8px;
+            font-size: 14px;
+            transition: 0.3s;
+        }
+
+        .buy-btn:hover {
+            background: var(--accent-green);
+            color: #000;
+            border-color: var(--accent-green);
+        }
+        
+        /* 悬停放大效果 */
+        .product-card:hover {
+            transform: scale(1.02);
+            box-shadow: var(--card-hover-shadow);
+            border-color: rgba(74, 222, 128, 0.5);
+        }
+
+        /* --- 页脚 --- */
+        footer {
+            padding: 60px 10%;
+            background: #020502;
+            border-top: 1px solid var(--glass-border);
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .footer-logo {
+            font-size: 20px;
+            color: #fff;
+            margin-bottom: 20px;
+            display: inline-block;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        /* --- 响应式适配 --- */
+        @media (max-width: 768px) {
+            .hero-content h1 { font-size: 40px; }
+            .nav-links { display: none; } /* 简化处理，实际需做汉堡菜单 */
+            .section { padding: 80px 5%; }
+        }
+        
+        /* 视差元素类 */
+        .parallax-el {
+            will-change: transform;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="cursor-dot"></div>
+    <div class="cursor-outline"></div>
+
+    <nav class="glass-panel" style="border-radius: 0; border: none; border-bottom: 1px solid rgba(255,255,255,0.05);">
+        <div class="logo">DREAM GARDEN 梦飞田园</div>
+        <div class="nav-links">
+            <a href="#home">首页</a>
+            <a href="#about">品牌故事</a>
+            <a href="#products">甄选产品</a>
+            <a href="#peripheral">文创周边</a>
+            <a href="#contact">联系我们</a>
+        </div>
+        <a href="#" class="btn" style="padding: 8px 20px; font-size: 14px;">立即购买</a>
+    </nav>
+
+    <section id="home" class="hero">
+        <div class="hero-bg parallax-el" data-speed="0.5"></div>
+        <div class="glow-orb orb-1 parallax-el" data-speed="0.2"></div>
+        <div class="glow-orb orb-2 parallax-el" data-speed="0.3"></div>
+
+        <div class="hero-content">
+            <h1>自然心，<span>梦飞田</span></h1>
+            <p>沃野之上，共育新生。从田间地头的鲜甜，直抵您的餐桌。<br>大南昌都市圈沉浸式健康生活标杆。</p>
+            <a href="#products" class="btn hero-btn">探索鲜境</a>
+        </div>
+    </section>
+
+    <section id="about" class="section">
+        <div class="section-title"><span>品牌核心</span></div>
+        <div class="about-grid">
+            <div class="feature-card glass-panel fade-in-up">
+                <div class="feature-icon">🌿</div>
+                <h3>健康自然</h3>
+                <p>坚持有机种植，无公害管理。每一根芦笋都承载着大自然的纯粹与生机，48小时从田间到舌尖锁鲜。</p>
+            </div>
+            <div class="feature-card glass-panel fade-in-up">
+                <div class="feature-icon">🔬</div>
+                <h3>智慧农业</h3>
+                <p>联合南昌大学科研团队，采用物联网监控与AI分拣，打造可溯源的现代化智慧农业生产线。</p>
+            </div>
+            <div class="feature-card glass-panel fade-in-up">
+                <div class="feature-icon">🤝</div>
+                <h3>三产融合</h3>
+                <p>不仅仅是农产品，更是集种植、深加工、研学旅游为一体的乡村振兴创新共同体。</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="products" class="section">
+        <div class="section-title"><span>田园臻味</span></div>
+        <div class="products-container">
+            <div class="product-card glass-panel fade-in-up">
+                <div class="product-img p-img-1">
+                    <span>[图片：鲜嫩芦笋头 - 翠绿欲滴]</span>
+                </div>
+                <div class="product-info">
+                    <div>
+                        <div class="product-name">梦飞鲜芦笋</div>
+                        <div class="product-desc">清甜爆汁，可直接生吃的春日限定美味。</div>
+                    </div>
+                    <div>
+                        <div class="product-price">¥ 29.9 / 斤</div>
+                        <div class="buy-btn">加入购物车</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="product-card glass-panel fade-in-up">
+                <div class="product-img p-img-2">
+                    <span>[图片：手工芦笋糕 - 细腻绵软]</span>
+                </div>
+                <div class="product-info">
+                    <div>
+                        <div class="product-name">手工芦笋糕</div>
+                        <div class="product-desc">传统工艺与现代健康的结合，低糖高纤。</div>
+                    </div>
+                    <div>
+                        <div class="product-price">¥ 38.0 / 盒</div>
+                        <div class="buy-btn">加入购物车</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="product-card glass-panel fade-in-up">
+                <div class="product-img p-img-3">
+                    <span>[图片：芦笋养生面 - 劲道爽滑]</span>
+                </div>
+                <div class="product-info">
+                    <div>
+                        <div class="product-name">芦笋膳食面</div>
+                        <div class="product-desc">富含膳食纤维，餐桌上的健康主食首选。</div>
+                    </div>
+                    <div>
+                        <div class="product-price">¥ 19.9 / 包</div>
+                        <div class="buy-btn">加入购物车</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="peripheral" class="section" style="background: linear-gradient(to bottom, var(--bg-color), #0a1f0a);">
+        <div class="section-title"><span>文创周边</span></div>
+        <div class="about-grid">
+            <div class="glass-panel fade-in-up" style="padding: 40px; display: flex; align-items: center; gap: 30px;">
+                <div style="flex: 1; min-width: 150px; height: 150px; background: #222; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #666;">
+                    [IP形象：芦不抛]
+                </div>
+                <div style="flex: 2;">
+                    <h3 style="font-size: 24px; margin-bottom: 10px;">IP形象：芦不抛</h3>
+                    <p style="color: #aaa; margin-bottom: 20px;">“芦笋鲈鱼抛不得”，寓意珍重与希望。可爱的卡通形象周边，带走田园的快乐记忆。</p>
+                    <a href="#" class="btn" style="padding: 10px 25px; font-size: 12px;">查看周边商城</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer id="contact">
+        <div class="footer-logo">DREAM GARDEN STUDIO</div>
+        <div class="footer-links">
+            <a href="#">关于我们</a>
+            <a href="#">产品溯源</a>
+            <a href="#">商务合作</a>
+            <a href="#">隐私政策</a>
+        </div>
+        <p>地址：南昌市新建区石埠镇梦飞田园基地</p>
+        <p>&copy; 2025 梦飞田园品牌策划工作室 版权所有</p>
+    </footer>
+
+    <script>
+        // --- 1. 自定义光标逻辑 ---
+        const cursorDot = document.querySelector('.cursor-dot');
+        const cursorOutline = document.querySelector('.cursor-outline');
+
+        window.addEventListener('mousemove', (e) => {
+            const posX = e.clientX;
+            const posY = e.clientY;
+
+            // 点直接跟随
+            cursorDot.style.left = `${posX}px`;
+            cursorDot.style.top = `${posY}px`;
+
+            // 圆圈延迟跟随，增加流畅感
+            cursorOutline.animate({
+                left: `${posX}px`,
+                top: `${posY}px`
+            }, { duration: 500, fill: "forwards" });
+        });
+
+        // 鼠标悬停在链接或按钮时的交互
+        const hoverTargets = document.querySelectorAll('a, .btn, .product-card, .buy-btn');
+        hoverTargets.forEach(el => {
+            el.addEventListener('mouseenter', () => {
+                cursorOutline.style.width = '60px';
+                cursorOutline.style.height = '60px';
+                cursorOutline.style.backgroundColor = 'rgba(74, 222, 128, 0.1)';
+            });
+            el.addEventListener('mouseleave', () => {
+                cursorOutline.style.width = '40px';
+                cursorOutline.style.height = '40px';
+                cursorOutline.style.backgroundColor = 'transparent';
+            });
+        });
+
+        // --- 2. 导航栏滚动变色 ---
+        const nav = document.querySelector('nav');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                nav.classList.add('scrolled');
+            } else {
+                nav.classList.remove('scrolled');
+            }
+        });
+
+        // --- 3. 简单的视差滚动效果 (Parallax) ---
+        const parallaxEls = document.querySelectorAll('.parallax-el');
+        window.addEventListener('scroll', () => {
+            let scrollY = window.scrollY;
+            parallaxEls.forEach(el => {
+                let speed = el.dataset.speed;
+                el.style.transform = `translateY(${scrollY * speed}px)`;
+            });
+        });
+
+        // --- 4. 滚动入场动画 (Intersection Observer) ---
+        const observerOptions = {
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.fade-in-up').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(50px)';
+            el.style.transition = 'opacity 0.8s ease-out, transform 0.8s ease-out';
+            observer.observe(el);
+        });
+
+    </script>
+</body>
+</html>
