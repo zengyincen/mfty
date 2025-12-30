@@ -138,7 +138,6 @@
             overflow: hidden;
         }
 
-        /* 模拟背景图 - 实际开发建议用高清芦笋田园图 */
         .hero-bg {
             position: absolute;
             top: 0;
@@ -275,7 +274,7 @@
         .feature-card h3 { margin-bottom: 15px; }
         .feature-card p { color: #ccc; font-size: 14px; }
 
-        /* --- 产品展示 (重点液态效果) --- */
+        /* --- 产品展示 (更新后的样式) --- */
         .products-container {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -289,38 +288,37 @@
             transition: 0.5s cubic-bezier(0.23, 1, 0.32, 1);
         }
 
-        .product-card::before {
-            content: '';
-            position: absolute;
-            top: 0; left: -100%;
-            width: 50%; height: 100%;
-            background: linear-gradient(to right, transparent, rgba(255,255,255,0.3), transparent);
-            transform: skewX(-25deg);
-            transition: 0.5s;
+        /* 移除卡片光泽覆盖，避免遮挡图片，只保留边框和阴影互动 */
+        .product-card:hover {
+            transform: scale(1.02);
+            box-shadow: var(--card-hover-shadow);
+            border-color: rgba(74, 222, 128, 0.5);
         }
 
-        .product-card:hover::before {
-            left: 150%;
-            transition: 0.7s;
-        }
-
+        /* 图片容器：固定大小，隐藏溢出 */
         .product-img {
             width: 100%;
-            height: 60%;
-            background-color: #1a1a1a; /* 占位色，实际应为图片 */
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #555;
-            font-size: 12px;
+            height: 60%; /* 占据卡片高度的 60% */
+            overflow: hidden; /* 关键：切断溢出的图片，防止遮挡下方文字 */
             position: relative;
+            border-radius: 16px 16px 0 0; 
+            background-color: #1a1a1a;
+        }
+
+        /* 图片本身：自适应填充 */
+        .product-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* 核心代码：自动裁切填满，不拉伸 */
+            object-position: center;
+            display: block;
+            transition: transform 0.7s ease;
         }
         
-        /* 模拟图片内容 */
-        .p-img-1 { background: radial-gradient(#4ade8022, #000); } /* 芦笋 */
-        .p-img-2 { background: radial-gradient(#eab30822, #000); } /* 芦笋糕 */
-        .p-img-3 { background: radial-gradient(#84cc1622, #000); } /* 芦笋面 */
-        .p-img-4 { background: radial-gradient(#22d3ee22, #000); } /* 周边 IP */
+        /* 悬停时图片缓慢放大 */
+        .product-card:hover .product-img img {
+            transform: scale(1.1);
+        }
 
         .product-info {
             padding: 20px;
@@ -328,6 +326,8 @@
             display: flex;
             flex-direction: column;
             justify-content: space-between;
+            position: relative; /* 确保文字在最上层 */
+            z-index: 2;
         }
 
         .product-name {
@@ -363,13 +363,6 @@
             color: #000;
             border-color: var(--accent-green);
         }
-        
-        /* 悬停放大效果 */
-        .product-card:hover {
-            transform: scale(1.02);
-            box-shadow: var(--card-hover-shadow);
-            border-color: rgba(74, 222, 128, 0.5);
-        }
 
         /* --- 页脚 --- */
         footer {
@@ -398,14 +391,11 @@
         /* --- 响应式适配 --- */
         @media (max-width: 768px) {
             .hero-content h1 { font-size: 40px; }
-            .nav-links { display: none; } /* 简化处理，实际需做汉堡菜单 */
+            .nav-links { display: none; } 
             .section { padding: 80px 5%; }
         }
         
-        /* 视差元素类 */
-        .parallax-el {
-            will-change: transform;
-        }
+        .parallax-el { will-change: transform; }
 
     </style>
 </head>
@@ -464,7 +454,7 @@
         <div class="products-container">
             <div class="product-card glass-panel fade-in-up">
                 <div class="product-img p-img-1">
-                    <img src="https://gh-proxy.org/https://github.com/zengyincen/img/blob/master/xianlusun.jpg" alt="鲜嫩芦笋 - 翠绿欲滴">
+                    <img src="https://gh-proxy.org/https://github.com/zengyincen/img/blob/master/xianlusun.jpg?raw=true" alt="鲜嫩芦笋">
                 </div>
                 <div class="product-info">
                     <div>
@@ -480,7 +470,7 @@
 
             <div class="product-card glass-panel fade-in-up">
                 <div class="product-img p-img-2">
-                    <span><img src="https://gh-proxy.org/https://github.com/zengyincen/img/blob/master/lunsungao.png" alt="手工芦笋糕 - 甜而不腻"></span>
+                    <img src="https://gh-proxy.org/https://github.com/zengyincen/img/blob/master/lunsungao.png?raw=true" alt="手工芦笋糕">
                 </div>
                 <div class="product-info">
                     <div>
@@ -496,7 +486,7 @@
 
             <div class="product-card glass-panel fade-in-up">
                 <div class="product-img p-img-3">
-                    <span><img src="https://gh-proxy.org/https://github.com/zengyincen/img/blob/master/lunsunmian.jpg" alt="健康芦笋面 - 膳食首选"></span>
+                    <img src="https://gh-proxy.org/https://github.com/zengyincen/img/blob/master/lunsunmian.jpg?raw=true" alt="健康芦笋面">
                 </div>
                 <div class="product-info">
                     <div>
@@ -517,7 +507,7 @@
         <div class="about-grid">
             <div class="glass-panel fade-in-up" style="padding: 40px; display: flex; align-items: center; gap: 30px;">
                 <div style="flex: 1; min-width: 150px; height: 150px; background: #222; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #666;">
-                    <img src="https://gh-proxy.org/https://github.com/zengyincen/img/blob/master/lubupao.jpg" alt="芦不抛 - 芦笋小精灵">
+                    [IP形象：芦不抛]
                 </div>
                 <div style="flex: 2;">
                     <h3 style="font-size: 24px; margin-bottom: 10px;">IP形象：芦不抛</h3>
@@ -549,18 +539,16 @@
             const posX = e.clientX;
             const posY = e.clientY;
 
-            // 点直接跟随
             cursorDot.style.left = `${posX}px`;
             cursorDot.style.top = `${posY}px`;
 
-            // 圆圈延迟跟随，增加流畅感
             cursorOutline.animate({
                 left: `${posX}px`,
                 top: `${posY}px`
             }, { duration: 500, fill: "forwards" });
         });
 
-        // 鼠标悬停在链接或按钮时的交互
+        // 鼠标悬停交互
         const hoverTargets = document.querySelectorAll('a, .btn, .product-card, .buy-btn');
         hoverTargets.forEach(el => {
             el.addEventListener('mouseenter', () => {
@@ -585,7 +573,7 @@
             }
         });
 
-        // --- 3. 简单的视差滚动效果 (Parallax) ---
+        // --- 3. 简单的视差滚动效果 ---
         const parallaxEls = document.querySelectorAll('.parallax-el');
         window.addEventListener('scroll', () => {
             let scrollY = window.scrollY;
@@ -595,7 +583,7 @@
             });
         });
 
-        // --- 4. 滚动入场动画 (Intersection Observer) ---
+        // --- 4. 滚动入场动画 ---
         const observerOptions = {
             threshold: 0.1
         };
