@@ -274,7 +274,7 @@
         .feature-card h3 { margin-bottom: 15px; }
         .feature-card p { color: #ccc; font-size: 14px; }
 
-        /* --- 产品展示 (更新后的样式) --- */
+        /* --- 产品展示 --- */
         .products-container {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -288,34 +288,30 @@
             transition: 0.5s cubic-bezier(0.23, 1, 0.32, 1);
         }
 
-        /* 移除卡片光泽覆盖，避免遮挡图片，只保留边框和阴影互动 */
         .product-card:hover {
             transform: scale(1.02);
             box-shadow: var(--card-hover-shadow);
             border-color: rgba(74, 222, 128, 0.5);
         }
 
-        /* 图片容器：固定大小，隐藏溢出 */
         .product-img {
             width: 100%;
-            height: 60%; /* 占据卡片高度的 60% */
-            overflow: hidden; /* 关键：切断溢出的图片，防止遮挡下方文字 */
+            height: 60%;
+            overflow: hidden;
             position: relative;
             border-radius: 16px 16px 0 0; 
             background-color: #1a1a1a;
         }
 
-        /* 图片本身：自适应填充 */
         .product-img img {
             width: 100%;
             height: 100%;
-            object-fit: cover; /* 核心代码：自动裁切填满，不拉伸 */
+            object-fit: cover;
             object-position: center;
             display: block;
             transition: transform 0.7s ease;
         }
         
-        /* 悬停时图片缓慢放大 */
         .product-card:hover .product-img img {
             transform: scale(1.1);
         }
@@ -326,7 +322,7 @@
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            position: relative; /* 确保文字在最上层 */
+            position: relative;
             z-index: 2;
         }
 
@@ -393,6 +389,7 @@
             .hero-content h1 { font-size: 40px; }
             .nav-links { display: none; } 
             .section { padding: 80px 5%; }
+            .about-grid .glass-panel { flex-direction: column; text-align: center; }
         }
         
         .parallax-el { will-change: transform; }
@@ -506,8 +503,8 @@
         <div class="section-title"><span>文创周边</span></div>
         <div class="about-grid">
             <div class="glass-panel fade-in-up" style="padding: 40px; display: flex; align-items: center; gap: 30px;">
-                <div style="flex: 1; min-width: 150px; height: 150px; background: #222; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #666;">
-                    [IP形象：芦不抛]
+                <div style="flex: 0 0 150px; width: 150px; height: 150px; background: #222; border-radius: 50%; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+                    <img src="https://gh-proxy.org/https://github.com/zengyincen/img/blob/master/lunbupao.jpg?raw=true" alt="芦不抛" style="width: 100%; height: 100%; object-fit: cover;">
                 </div>
                 <div style="flex: 2;">
                     <h3 style="font-size: 24px; margin-bottom: 10px;">IP形象：芦不抛</h3>
